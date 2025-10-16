@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misinformation Detector</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 400px;
+      min-height: 550px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(to bottom, #fafbff 0%, #f5f7ff 100%);
+      color: #1e293b;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #c084fc 100%);
+      color: white;
+      padding: 32px 28px 28px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(129, 140, 248, 0.15);
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+      filter: blur(40px);
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+      font-weight: 400;
+      position: relative;
+      z-index: 1;
+    }
+
+    .content {
+      padding: 28px 24px;
+    }
+
+    .status {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: none;
+      box-shadow: 0 4px 20px rgba(129, 140, 248, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .status::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(180deg, #818cf8 0%, #a78bfa 100%);
+      border-radius: 20px 0 0 20px;
+    }
+
+    .status-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #111827;
+    }
+
+    .status-icon {
+      font-size: 22px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    .status-message {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.6;
+      padding-left: 32px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px 24px;
+      border: none;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: -0.2px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+      color: white;
+      box-shadow: 0 8px 24px -4px rgba(129, 140, 248, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px -4px rgba(129, 140, 248, 0.45);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #818cf8;
+      border: none;
+      box-shadow: 0 4px 16px rgba(129, 140, 248, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: #fafbff;
+      box-shadow: 0 6px 20px rgba(129, 140, 248, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .settings-section {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+      border: none;
+      box-shadow: 0 4px 20px rgba(129, 140, 248, 0.08);
+    }
+
+    .settings-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .setting-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .setting-label {
+      font-size: 14px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .toggle {
+      position: relative;
+      width: 50px;
+      height: 28px;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #e5e7eb;
+      transition: 0.3s;
+      border-radius: 28px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    input:checked + .slider {
+      background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+      box-shadow: 0 0 12px rgba(129, 140, 248, 0.3);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    select {
+      padding: 10px 14px;
+      border: 2px solid #e0e7ff;
+      border-radius: 12px;
+      font-size: 14px;
+      background: #fafbff;
+      cursor: pointer;
+      font-weight: 500;
+      color: #475569;
+      transition: all 0.2s;
+    }
+
+    select:hover {
+      border-color: #c7d2fe;
+      background: white;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #818cf8;
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
+    }
+
+    .footer {
+      padding: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #94a3b8;
+      border-top: none;
+      background: transparent;
+    }
+
+    .footer a {
+      color: #818cf8;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .footer a:hover {
+      color: #6366f1;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      border: 4px solid #e0e7ff;
+      border-top: 4px solid #818cf8;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      margin: 0 auto 16px;
+      box-shadow: 0 4px 12px rgba(129, 140, 248, 0.15);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Smooth animations */
+    * {
+      transition: background-color 0.2s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🛡️ Misinformation Detector</h1>
+    <p>AI-powered fact-checking for the web</p>
+  </div>
+
+  <div class="content">
+    <div class="status" id="status-section">
+      <div class="status-title">
+        <span class="status-icon" id="status-icon">ℹ️</span>
+        <span id="status-title-text">Ready</span>
+      </div>
+      <p class="status-message" id="status-message">
+        Click "Analyze This Page" to check the current page for misinformation.
+      </p>
+    </div>
+
+    <button class="btn btn-primary" id="analyze-btn">
+      🔍 Open AI Fact Checker
+    </button>
+
+    <button class="btn btn-secondary" id="history-btn">
+      📋 View History
+    </button>
+
+    <div class="settings-section">
+      <div class="settings-title">⚙️ Settings</div>
+      
+      <div class="setting-item">
+        <span class="setting-label">Auto-analyze pages</span>
+        <label class="toggle">
+          <input type="checkbox" id="auto-analyze-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-item">
+        <span class="setting-label">Sensitivity</span>
+        <select id="sensitivity-select">
+          <option value="strict">Strict</option>
+          <option value="moderate" selected>Moderate</option>
+          <option value="lenient">Lenient</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>v1.0.0 | <a href="#" id="help-link">Help</a> | <a href="#" id="about-link">About</a></p>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

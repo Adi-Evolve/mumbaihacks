@@ -1,0 +1,193 @@
+# Misinformation Detector Project
+# Git Ignore File
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.pytype/
+cov.xml
+*.cover
+*.log
+
+# Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# AI Models & Data
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.pkl
+*.pickle
+models/
+data/raw/
+data/processed/
+*.csv
+*.json.gz
+*.parquet
+faiss_index/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+postgresql/
+
+# Node.js (for web app)
+node_modules/
+npm-debug.log
+yarn-error.log
+.npm
+.yarn-integrity
+.next/
+out/
+.cache/
+
+# Build outputs
+dist/
+build/
+*.zip
+*.tar.gz
+*.rar
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Extension temporary files
+extension/web-ext-artifacts/
+extension/*.zip
+extension/*.xpi
+extension/*.crx
+
+# Secrets & Credentials
+secrets/
+credentials/
+*.pem
+*.key
+*.crt
+*.p12
+config/secrets.json
+.secrets/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Documentation builds
+docs/_build/
+site/
+
+# Backup files
+*.backup
+*.old
+*-old
+*-backup
+
+# Large datasets (add specific patterns)
+dataset/
+datasets/
+*.h5
+*.hdf5
+
+# Redis dumps
+dump.rdb
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Local configuration overrides
+local_settings.py
+config.local.json
+
+# API keys and tokens (be careful!)
+*token*
+*apikey*
+*api_key*
+*secret_key*
+
+# Cache directories
+.cache/
+__cache__/
+.parcel-cache/

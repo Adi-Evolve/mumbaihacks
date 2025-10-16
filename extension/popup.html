@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fact Checker</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 380px;
+      min-height: 500px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: #ffffff;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .header-text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+      margin-bottom: 2px;
+    }
+
+    .header-text p {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    .status-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 4px 10px;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #22c55e;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .content {
+      padding: 20px;
+      flex: 1;
+    }
+
+    .input-section {
+      margin-bottom: 16px;
+    }
+
+    .input-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-icon {
+      width: 12px;
+      height: 12px;
+      opacity: 0.7;
+    }
+
+    .search-wrapper {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 36px 12px 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      transition: all 0.2s;
+      background: #f8fafc;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #e2e8f0;
+      border: none;
+      color: #64748b;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      line-height: 1;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .clear-btn:hover {
+      background: #cbd5e1;
+      color: #475569;
+    }
+
+    .btn-analyze {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+      letter-spacing: -0.1px;
+    }
+
+    .btn-analyze:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-analyze:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-analyze:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .quick-action-chip {
+      padding: 11px 14px;
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .quick-action-chip:hover {
+      border-color: #3b82f6;
+      background: #eff6ff;
+      color: #2563eb;
+      transform: translateY(-1px);
+    }
+
+    .chip-icon {
+      font-size: 14px;
+    }
+
+    .stats-section {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .stats-section.active {
+      display: block;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0c4a6e;
+      margin-bottom: 2px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #0369a1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .results-section {
+      border-top: 1px solid #e2e8f0;
+      padding: 18px 20px;
+      background: #f8fafc;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .results-section.hidden {
+      display: none;
+    }
+
+    .result-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .result-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .result-status.verified {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .result-status.questionable {
+      background: #fed7aa;
+      color: #92400e;
+    }
+
+    .result-status.false {
+      background: #fecaca;
+      color: #991b1b;
+    }
+
+    .status-icon {
+      font-size: 13px;
+    }
+
+    .result-confidence {
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 14px;
+    }
+
+    .confidence-bar {
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #2563eb);
+      border-radius: 3px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .result-details {
+      font-size: 12px;
+      color: #475569;
+      line-height: 1.6;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 6px;
+      border-left: 3px solid #3b82f6;
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 36px 20px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 14px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .error-state {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 14px;
+      color: #991b1b;
+    }
+
+    .error-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .error-message {
+      font-size: 11px;
+      line-height: 1.5;
+      color: #b91c1c;
+    }
+
+    .status-message {
+      font-size: 11px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-message.hidden {
+      display: none;
+    }
+
+    .message-icon {
+      font-size: 14px;
+    }
+
+    /* Scrollbar styling */
+    .results-section::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .results-section::-webkit-scrollbar-track {
+      background: #f8fafc;
+    }
+
+    .results-section::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    .results-section::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* Feature badges */
+    .feature-indicators {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .feature-badge {
+      font-size: 9px;
+      padding: 3px 8px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 4px;
+      color: #1e40af;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="status-badge">Active</div>
+      <div class="header-content">
+        <div class="logo">🛡️</div>
+        <div class="header-text">
+          <h1>AI Fact Checker</h1>
+          <p>Advanced misinformation detection</p>
+        </div>
+      </div>
+      <div class="feature-indicators">
+        <span class="feature-badge">Multi-Modal AI</span>
+        <span class="feature-badge">News Verified</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="input-section">
+        <label class="input-label">
+          <svg class="input-icon" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+          </svg>
+          Enter Text or URL
+        </label>
+        
+        <div class="search-wrapper">
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Paste article text or URL to analyze..."
+            autocomplete="off"
+          >
+          <button id="clearBtn" class="clear-btn" style="display: none;">×</button>
+        </div>
+
+        <button id="analyzeBtn" class="btn-analyze" disabled>
+          Analyze Content
+        </button>
+
+        <div class="quick-actions">
+          <button class="quick-action-chip" data-action="current-page">
+            <span class="chip-icon">📄</span>
+            <span>This Page</span>
+          </button>
+          <button class="quick-action-chip" data-action="example">
+            <span class="chip-icon">✨</span>
+            <span>Try Demo</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="statsSection" class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value" id="totalAnalyzed">0</div>
+            <div class="stat-label">Analyzed</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="suspiciousFound">0</div>
+            <div class="stat-label">Flagged</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="statusMessage" class="status-message hidden">
+        <span class="message-icon">ℹ️</span>
+        <span id="statusText"></span>
+      </div>
+    </div>
+
+    <div id="resultsSection" class="results-section hidden">
+      <div id="resultsContent"></div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
